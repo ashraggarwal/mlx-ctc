@@ -2,8 +2,6 @@
 
 #include <metal_stdlib>
 
-#include "mlx/backend/metal/kernels/utils.h"
-
 #define MTL_DEVICEP device
 #define MTL_CONSTP  constant
 namespace stdlib = metal;
