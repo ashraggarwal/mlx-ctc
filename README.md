@@ -6,6 +6,8 @@
 
 C++ and Metal extensions for [MLX](https://github.com/ml-explore/mlx) CTC Loss
 
+This fork updates CTC Loss to be compatible with MLX 0.29.0.  All code credit goes to original authors, I've only fixed up some function signatures / names based on updates to the MLX backend code.
+
 ## Library status
 
 Library is passing initial tests and benchmarks.
