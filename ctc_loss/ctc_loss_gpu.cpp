@@ -67,8 +67,8 @@ void CTCLoss::eval_gpu(const std::vector<array>& inputs, std::vector<array>& out
   size_t batch_size     = log_probs.shape()[1];
   size_t max_target_len = targets.shape()[1];
 
-  log_alpha.set_data(allocator::malloc_or_wait(log_alpha.nbytes()));
-  loss.set_data(allocator::malloc_or_wait(loss.nbytes()));
+  log_alpha.set_data(allocator::malloc(log_alpha.nbytes()));
+  loss.set_data(allocator::malloc(loss.nbytes()));
 
   assert_contiguous(log_probs);
   assert_contiguous(targets);
@@ -138,8 +138,8 @@ void CTCLossVJP::eval_gpu(const std::vector<array>& inputs, std::vector<array>& 
   size_t max_target_len   = targets  .shape()[1];
   size_t num_channels     = log_probs.shape()[2];
 
-  grad.set_data(allocator::malloc_or_wait(grad.nbytes()));
-  log_beta.set_data(allocator::malloc_or_wait(log_beta.nbytes()));
+  grad.set_data(allocator::malloc(grad.nbytes()));
+  log_beta.set_data(allocator::malloc(log_beta.nbytes()));
 
   assert_contiguous(log_probs);
   assert_contiguous(targets);
