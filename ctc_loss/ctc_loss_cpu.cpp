@@ -23,8 +23,8 @@ static void ctc_loss_impl(
   size_t input_time_size   = log_probs.shape()[0];
   size_t batch_size        = log_probs.shape()[1];
 
-  loss.set_data(allocator::malloc_or_wait(loss.nbytes()));
-  log_alpha.set_data(allocator::malloc_or_wait(log_alpha.nbytes()));
+  loss.set_data(allocator::malloc(loss.nbytes()));
+  log_alpha.set_data(allocator::malloc(log_alpha.nbytes()));
 
   assert_contiguous(log_probs);
   assert_contiguous(targets);
@@ -86,8 +86,8 @@ static void ctc_loss_vjp_impl(
   array& grad,
   array& log_beta
 ) {
-  grad.set_data(allocator::malloc_or_wait(grad.nbytes()));
-  log_beta.set_data(allocator::malloc_or_wait(log_beta.nbytes()));
+  grad.set_data(allocator::malloc(grad.nbytes()));
+  log_beta.set_data(allocator::malloc(log_beta.nbytes()));
 
   size_t max_input_length  = log_probs.shape()[0];
   size_t batch_size        = log_probs.shape()[1];
