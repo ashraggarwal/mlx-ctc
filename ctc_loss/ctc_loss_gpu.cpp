@@ -26,10 +26,10 @@ static inline void dispatch_kernel(
   As ...args
 ) {
   auto& d = metal::device(s.device);
-  d.register_library(lib_name, metal::get_colocated_mtllib_path);
+  auto lib = d.get_library(lib_name);
 
   auto& compute_encoder = d.get_command_encoder(s.index);
-  auto kernel = d.get_kernel(kname, lib_name);
+  auto kernel = d.get_kernel(kname, lib);
   compute_encoder->setComputePipelineState(kernel);
 
   size_t idx = 0;
@@ -120,7 +120,7 @@ void CTCLoss::eval_gpu(const std::vector<array>& inputs, std::vector<array>& out
 void CTCLossVJP::eval_gpu(const std::vector<array>& inputs, std::vector<array>& outarr) {
   auto& s = stream();
   auto& d = metal::device(s.device);
-  d.register_library(lib_name, metal::get_colocated_mtllib_path);
+  d.get_library(lib_name);
 
   auto& log_probs      = inputs[0];
   auto& targets        = inputs[1];
