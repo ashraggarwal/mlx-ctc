@@ -58,7 +58,7 @@ public:
   explicit CTCLoss(Stream stream, uint64_t blank = 0) : Primitive(stream), blank_(blank) {};
   void eval_cpu(const std::vector<array>& inputs, std::vector<array>& out) override;
   void eval_gpu(const std::vector<array>& inputs, std::vector<array>& out) override;
-  void print(std::ostream& os) override { os << "CTCLoss"; }
+  const char* name() const override { return "CTCLoss"; }
   bool is_equivalent(const Primitive& other) const override {
     return static_cast<const CTCLoss&>(other).blank_ == blank_;
   }
@@ -77,7 +77,7 @@ public:
   explicit CTCLossVJP(Stream stream, uint64_t blank = 0) : Primitive(stream), blank_(blank) {};
   void eval_cpu(const std::vector<array>& inputs, std::vector<array>& out) override;
   void eval_gpu(const std::vector<array>& inputs, std::vector<array>& out) override;
-  void print(std::ostream& os) override { os << "CTCLossVJP"; }
+  const char* name() const override { return "CTCLossVJP"; }
   bool is_equivalent(const Primitive& other) const override {
     return static_cast<const CTCLossVJP&>(other).blank_ == blank_;
   }
