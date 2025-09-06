@@ -30,12 +30,12 @@ static inline void dispatch_kernel(
 
   auto& compute_encoder = d.get_command_encoder(s.index);
   auto kernel = d.get_kernel(kname, lib);
-  compute_encoder->setComputePipelineState(kernel);
+  compute_encoder.set_compute_pipeline_state(kernel);
 
   size_t idx = 0;
   for (auto a : inputs ) compute_encoder.set_input_array (a, idx++);
   for (auto a : outputs) compute_encoder.set_output_array(a, idx++);
-  (compute_encoder->setBytes(&args, sizeof(As), idx++), ...);
+  (compute_encoder.set_bytes(&args, sizeof(As), idx++), ...);
 
   size_t num_th = kernel->maxTotalThreadsPerThreadgroup();
   MTL::Size group_size;
@@ -45,7 +45,7 @@ static inline void dispatch_kernel(
   num_th = std::max<size_t>(1, num_th / group_size.height);
   group_size.depth  = std::min<size_t>(grid_size.depth , num_th);
 
-  compute_encoder->dispatchThreads(grid_size, group_size);
+  compute_encoder.dispatch_threads(grid_size, group_size);
 }
 
 static inline void dispatch_fill_z(const Stream &s, array &a) {
