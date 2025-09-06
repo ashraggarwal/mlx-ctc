@@ -1,7 +1,5 @@
 // Copyright © 2024 Yury Popov (@djphoenix).
 
-#include <metal_math>
-
 #include "mlx/backend/metal/kernels/utils.h"
 
 #define MTL_DEVICEP device
