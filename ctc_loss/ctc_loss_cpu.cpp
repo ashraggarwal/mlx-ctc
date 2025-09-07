@@ -256,7 +256,7 @@ void CTCLossVJP::eval_cpu(const std::vector<mx::array>& inputs, std::vector<mx::
   auto& ctg            = inputs[6];
   auto& grad           = outarr[0];
 
-  array log_beta (log_alpha.shape(), log_alpha.dtype(), nullptr, {});
+  mx::array log_beta (log_alpha.shape(), log_alpha.dtype(), nullptr, {});
 
   if (grad.dtype() == mx::float32) {
     return ctc_loss_vjp_impl_i<mx::float>(log_probs, targets, input_lengths, target_lengths, log_alpha, nll, ctg, blank_, grad, log_beta);
