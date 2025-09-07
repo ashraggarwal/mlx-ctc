@@ -49,15 +49,15 @@ mx::array ctc_loss(
    */
   const mx::array& target_lengths,
 
-  mx::uint64_t blank = 0,   // Blank label, default `0`.
+  uint64_t blank = 0,   // Blank label, default `0`.
   mx::StreamOrDevice s = {} // Stream on which to schedule the operation
 );
 
 class CTCLoss : public mx::Primitive {
 private:
-  mx::uint64_t blank_;
+  uint64_t blank_;
 public:
-  explicit CTCLoss(mx::Stream stream, mx::uint64_t blank = 0) : mx::Primitive(stream), blank_(blank) {};
+  explicit CTCLoss(mx::Stream stream, uint64_t blank = 0) : mx::Primitive(stream), blank_(blank) {};
   void eval_cpu(const std::vector<mx::array>& inputs, std::vector<mx::array>& out) override;
   void eval_gpu(const std::vector<mx::array>& inputs, std::vector<mx::array>& out) override;
   const char* name() const override { return "CTCLoss"; }
@@ -74,9 +74,9 @@ public:
 
 class CTCLossVJP : public mx::Primitive {
 private:
-  mx::uint64_t blank_;
+  uint64_t blank_;
 public:
-  explicit CTCLossVJP(mx::Stream stream, mx::uint64_t blank = 0) : mx::Primitive(stream), blank_(blank) {};
+  explicit CTCLossVJP(mx::Stream stream, uint64_t blank = 0) : mx::Primitive(stream), blank_(blank) {};
   void eval_cpu(const std::vector<mx::array>& inputs, std::vector<mx::array>& out) override;
   void eval_gpu(const std::vector<mx::array>& inputs, std::vector<mx::array>& out) override;
   const char* name() const override { return "CTCLossVJP"; }
