@@ -131,7 +131,7 @@ void CTCLossVJP::eval_gpu(const std::vector<mx::array>& inputs, std::vector<mx::
   auto& ctg            = inputs[6];
   auto& grad           = outarr[0];
 
-  array log_beta (log_alpha.shape(), log_alpha.dtype(), nullptr, {});
+  mx::array log_beta (log_alpha.shape(), log_alpha.dtype(), nullptr, {});
 
   size_t max_input_length = log_probs.shape()[0];
   size_t batch_size       = log_probs.shape()[1];
