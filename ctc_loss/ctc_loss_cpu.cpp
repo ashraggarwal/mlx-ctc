@@ -241,7 +241,7 @@ void CTCLoss::eval_cpu(const std::vector<mx::array>& inputs, std::vector<mx::arr
     return ctc_loss_impl_i<float16_t>(log_probs, targets, input_lengths, target_lengths, blank_, loss, log_alpha);
   }
   if (loss.dtype() == mx::bfloat16) {
-    return ctc_loss_impl_i<bfloat16_t>(log_probs, targets, input_lengths, target_lengths, blank_, loss, log_alpha);
+    return ctc_loss_impl_i<mx::bfloat16_t>(log_probs, targets, input_lengths, target_lengths, blank_, loss, log_alpha);
   }
   throw std::runtime_error("CTCLoss is only supported for floating point types.");
 }
@@ -265,9 +265,9 @@ void CTCLossVJP::eval_cpu(const std::vector<mx::array>& inputs, std::vector<mx::
     return ctc_loss_vjp_impl_i<float16_t>(log_probs, targets, input_lengths, target_lengths, log_alpha, nll, ctg, blank_, grad, log_beta);
   }
   if (grad.dtype() == mx::bfloat16) {
-    return ctc_loss_vjp_impl_i<bfloat16_t>(log_probs, targets, input_lengths, target_lengths, log_alpha, nll, ctg, blank_, grad, log_beta);
+    return ctc_loss_vjp_impl_i<mx::bfloat16_t>(log_probs, targets, input_lengths, target_lengths, log_alpha, nll, ctg, blank_, grad, log_beta);
   }
   throw std::runtime_error("CTCLossVJP is only supported for floating point types.");
 }
 
-} // namespace mlx::core
+} // namespace ctc_ext
