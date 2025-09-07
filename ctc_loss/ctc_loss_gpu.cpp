@@ -1,6 +1,7 @@
 // Copyright © 2024 Yury Popov (@djphoenix).
 
 #include <dlfcn.h>
+#include <filesystem>
 #include <iostream>
 #include <sstream>
 
