@@ -9,7 +9,7 @@ mx::array ctc_loss(
   const mx::array& targets,
   const mx::array& input_lengths,
   const mx::array& target_lengths,
-  mx::uint64_t blank,
+  uint64_t blank,
   mx::StreamOrDevice s
 ) {
   auto out_dtype         = log_probs.dtype();
@@ -29,7 +29,7 @@ mx::array ctc_loss(
 std::vector<mx::array> CTCLoss::vjp(
   const std::vector<mx::array>& primals,
   const std::vector<mx::array>& cotangents,
-  const std::vector<mx::int>  & argnums,
+  const std::vector<int>  & argnums,
   const std::vector<mx::array>& outputs
 ) {
   auto &log_probs      = primals[0];
@@ -40,7 +40,7 @@ std::vector<mx::array> CTCLoss::vjp(
   auto &log_alpha      = outputs[1];
   auto &ctg            = cotangents[0];
 
-  return { array(
+  return { mx::array(
     log_probs.shape(), log_probs.dtype(),
     std::make_shared<CTCLossVJP>(stream(), blank_),
     { log_probs, targets, input_lengths, target_lengths, log_alpha, nll, ctg }
