@@ -13,7 +13,7 @@ NB_MODULE(_ext, m) {
 
     m.def(
         "ctc_loss",
-        &ctc_loss,
+        &ctc_ext::ctc_loss,
         "log_probs"_a,
         "targets"_a,
         "input_lengths"_a,
