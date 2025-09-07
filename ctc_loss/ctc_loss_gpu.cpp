@@ -9,6 +9,19 @@
 
 namespace ctc_ext {
 
+// A helper function to find the location of the current binary on disk.
+// The Metal library ("mlx_ctc.mtllib"), should be in the same directory.
+std::string current_binary_dir() {
+  static std::string binary_dir = []() {
+    Dl_info info;
+    if (!dladdr(reinterpret_cast<void*>(&current_binary_dir), &info)) {
+      throw std::runtime_error("Unable to get current binary dir.");
+    }
+    return std::filesystem::path(info.dli_fname).parent_path().string();
+  }();
+  return binary_dir;
+}
+
 #define assert_contiguous(a) \
   if (a.strides()[a.ndim()-1] != 1) throw std::runtime_error(#a " should be contiguous on last dimension")
 
@@ -26,7 +39,7 @@ static inline void dispatch_kernel(
   As ...args
 ) {
   auto& d = mx::metal::device(s.device);
-  auto lib = d.get_library(lib_name);
+  auto lib = d.get_library(lib_name, current_binary_dir());
 
   auto& compute_encoder = d.get_command_encoder(s.index);
   auto kernel = d.get_kernel(kname, lib);
@@ -120,7 +133,7 @@ void CTCLoss::eval_gpu(const std::vector<mx::array>& inputs, std::vector<mx::arr
 void CTCLossVJP::eval_gpu(const std::vector<mx::array>& inputs, std::vector<mx::array>& outarr) {
   auto& s = stream();
   auto& d = mx::metal::device(s.device);
-  d.get_library(lib_name);
+  d.get_library(lib_name, current_binary_dir());
 
   auto& log_probs      = inputs[0];
   auto& targets        = inputs[1];
