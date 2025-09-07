@@ -62,10 +62,13 @@ endif()
 # ----------------------------- Python Bindings -----------------------------
 nanobind_add_module(
   _ext
-  NB_STATIC STABLE_ABI LTO NOMINSIZE NOSTRIP
-  NB_DOMAIN mlx 
-  ${CMAKE_CURRENT_LIST_DIR}/bindings.cpp
-)
+  NB_STATIC
+  STABLE_ABI
+  LTO
+  NOMINSIZE
+  NB_DOMAIN
+  mlx
+  ${CMAKE_CURRENT_LIST_DIR}/bindings.cpp)
 target_link_libraries(_ext PRIVATE mlx_ctc)
 
 if(BUILD_SHARED_LIBS)
