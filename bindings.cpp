@@ -8,8 +8,6 @@
 namespace nb = nanobind;
 using namespace nb::literals;
 
-using namespace mlx::core;
-
 NB_MODULE(_ext, m) {
     m.doc() = "C++ and metal extensions for MLX CTC Loss";
 
