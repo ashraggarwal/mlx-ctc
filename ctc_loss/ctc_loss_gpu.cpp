@@ -1,6 +1,8 @@
 // Copyright © 2024 Yury Popov (@djphoenix).
 
 #include <dlfcn.h>
+#include <iostream>
+#include <sstream>
 
 #include "ctc_loss/ctc_loss.h"
 
