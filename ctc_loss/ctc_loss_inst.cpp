@@ -2,15 +2,15 @@
 
 #include "ctc_loss/ctc_loss.h"
 
-namespace mlx::core {
+namespace ctc_ext {
 
-array ctc_loss(
-  const array& log_probs,
-  const array& targets,
-  const array& input_lengths,
-  const array& target_lengths,
-  uint64_t blank,
-  StreamOrDevice s
+mx::array ctc_loss(
+  const mx::array& log_probs,
+  const mx::array& targets,
+  const mx::array& input_lengths,
+  const mx::array& target_lengths,
+  mx::uint64_t blank,
+  mx::StreamOrDevice s
 ) {
   auto out_dtype         = log_probs.dtype();
   auto input_time_size   = log_probs.shape()[0];
@@ -18,7 +18,7 @@ array ctc_loss(
   auto input_target_size = targets.shape()[1];
 
   // Output: loss, log_alpha
-  return array::make_arrays(
+  return mx::array::make_arrays(
     { { batch_size }, { input_time_size, batch_size, input_target_size * 2 + 2 } },
     { out_dtype, out_dtype },
     std::make_shared<CTCLoss>(to_stream(s), blank),
@@ -26,11 +26,11 @@ array ctc_loss(
   )[0];
 }
 
-std::vector<array> CTCLoss::vjp(
-  const std::vector<array>& primals,
-  const std::vector<array>& cotangents,
-  const std::vector<int>  & argnums,
-  const std::vector<array>& outputs
+std::vector<mx::array> CTCLoss::vjp(
+  const std::vector<mx::array>& primals,
+  const std::vector<mx::array>& cotangents,
+  const std::vector<mx::int>  & argnums,
+  const std::vector<mx::array>& outputs
 ) {
   auto &log_probs      = primals[0];
   auto &targets        = primals[1];
@@ -47,4 +47,4 @@ std::vector<array> CTCLoss::vjp(
   ) };
 }
 
-} // namespace mlx::core
+} // namespace ctc_ext
