@@ -2,7 +2,7 @@
 
 #include "ctc_loss/ctc_loss.h"
 
-namespace mlx::core {
+namespace ctc_ext {
 
 namespace stdlib = std;
 #include "ctc_loss_impl.h"
@@ -12,19 +12,19 @@ namespace stdlib = std;
 
 template <typename T, typename I>
 static void ctc_loss_impl(
-  const array& log_probs,
-  const array& targets,
-  const array& input_lengths,
-  const array& target_lengths,
+  const mx::array& log_probs,
+  const mx::array& targets,
+  const mx::array& input_lengths,
+  const mx::array& target_lengths,
   I blank,
-  array& loss,
-  array& log_alpha
+  mx::array& loss,
+  mx::array& log_alpha
 ) {
   size_t input_time_size   = log_probs.shape()[0];
   size_t batch_size        = log_probs.shape()[1];
 
-  loss.set_data(allocator::malloc(loss.nbytes()));
-  log_alpha.set_data(allocator::malloc(log_alpha.nbytes()));
+  loss.set_data(mx::allocator::malloc(loss.nbytes()));
+  log_alpha.set_data(mx::allocator::malloc(log_alpha.nbytes()));
 
   assert_contiguous(log_probs);
   assert_contiguous(targets);
@@ -75,19 +75,19 @@ static void ctc_loss_impl(
 
 template <typename T, typename I>
 static void ctc_loss_vjp_impl(
-  const array& log_probs,
-  const array& targets,
-  const array& input_lengths,
-  const array& target_lengths,
-  const array& log_alpha,
-  const array& nll,
-  const array& ctg,
+  const mx::array& log_probs,
+  const mx::array& targets,
+  const mx::array& input_lengths,
+  const mx::array& target_lengths,
+  const mx::array& log_alpha,
+  const mx::array& nll,
+  const mx::array& ctg,
   I blank,
-  array& grad,
-  array& log_beta
+  mx::array& grad,
+  mx::array& log_beta
 ) {
-  grad.set_data(allocator::malloc(grad.nbytes()));
-  log_beta.set_data(allocator::malloc(log_beta.nbytes()));
+  grad.set_data(mx::allocator::malloc(grad.nbytes()));
+  log_beta.set_data(mx::allocator::malloc(log_beta.nbytes()));
 
   size_t max_input_length  = log_probs.shape()[0];
   size_t batch_size        = log_probs.shape()[1];
@@ -175,58 +175,58 @@ static void ctc_loss_vjp_impl(
 
 template <typename T>
 static void ctc_loss_impl_i(
-  const array& log_probs,
-  const array& targets,
-  const array& input_lengths,
-  const array& target_lengths,
+  const mx::array& log_probs,
+  const mx::array& targets,
+  const mx::array& input_lengths,
+  const mx::array& target_lengths,
   uint64_t blank,
-  array& loss,
-  array& log_alpha
+  mx::array& loss,
+  mx::array& log_alpha
 ) {
-  if (targets.dtype() == uint64 || targets.dtype() == int64) {
-    return ctc_loss_impl<T, uint64_t>(log_probs, targets, input_lengths, target_lengths, blank, loss, log_alpha);
+  if (targets.dtype() == mx::uint64 || targets.dtype() == mx::int64) {
+    return ctc_loss_impl<T, mx::uint64_t>(log_probs, targets, input_lengths, target_lengths, blank, loss, log_alpha);
   }
-  if (targets.dtype() == uint32 || targets.dtype() == int32) {
-    return ctc_loss_impl<T, uint32_t>(log_probs, targets, input_lengths, target_lengths, blank, loss, log_alpha);
+  if (targets.dtype() == mx::uint32 || targets.dtype() == mx::int32) {
+    return ctc_loss_impl<T, mx::uint32_t>(log_probs, targets, input_lengths, target_lengths, blank, loss, log_alpha);
   }
-  if (targets.dtype() == uint16 || targets.dtype() == int16) {
-    return ctc_loss_impl<T, uint16_t>(log_probs, targets, input_lengths, target_lengths, blank, loss, log_alpha);
+  if (targets.dtype() == mx::uint16 || targets.dtype() == mx::int16) {
+    return ctc_loss_impl<T, mx::uint16_t>(log_probs, targets, input_lengths, target_lengths, blank, loss, log_alpha);
   }
-  if (targets.dtype() == uint8 || targets.dtype() == int8) {
-    return ctc_loss_impl<T, uint8_t>(log_probs, targets, input_lengths, target_lengths, blank, loss, log_alpha);
+  if (targets.dtype() == mx::uint8 || targets.dtype() == mx::int8) {
+    return ctc_loss_impl<T, mx::uint8_t>(log_probs, targets, input_lengths, target_lengths, blank, loss, log_alpha);
   }
   throw std::runtime_error("CTCLoss is only supported for integral targets.");
 }
 
 template <typename T>
 static void ctc_loss_vjp_impl_i(
-  const array& log_probs,
-  const array& targets,
-  const array& input_lengths,
-  const array& target_lengths,
-  const array& log_alpha,
-  const array& nll,
-  const array& ctg,
+  const mx::array& log_probs,
+  const mx::array& targets,
+  const mx::array& input_lengths,
+  const mx::array& target_lengths,
+  const mx::array& log_alpha,
+  const mx::array& nll,
+  const mx::array& ctg,
   uint64_t blank,
-  array& grad,
-  array& log_beta
+  mx::array& grad,
+  mx::array& log_beta
 ) {
-  if (targets.dtype() == uint64 || targets.dtype() == int64) {
-    return ctc_loss_vjp_impl<T, uint64_t>(log_probs, targets, input_lengths, target_lengths, log_alpha, nll, ctg, blank, grad, log_beta);
+  if (targets.dtype() == mx::uint64 || targets.dtype() == mx::int64) {
+    return ctc_loss_vjp_impl<T, mx::uint64_t>(log_probs, targets, input_lengths, target_lengths, log_alpha, nll, ctg, blank, grad, log_beta);
   }
-  if (targets.dtype() == uint32 || targets.dtype() == int32) {
-    return ctc_loss_vjp_impl<T, uint32_t>(log_probs, targets, input_lengths, target_lengths, log_alpha, nll, ctg, blank, grad, log_beta);
+  if (targets.dtype() == mx::uint32 || targets.dtype() == mx::int32) {
+    return ctc_loss_vjp_impl<T, mx::uint32_t>(log_probs, targets, input_lengths, target_lengths, log_alpha, nll, ctg, blank, grad, log_beta);
   }
-  if (targets.dtype() == uint16 || targets.dtype() == int16) {
-    return ctc_loss_vjp_impl<T, uint16_t>(log_probs, targets, input_lengths, target_lengths, log_alpha, nll, ctg, blank, grad, log_beta);
+  if (targets.dtype() == mx::uint16 || targets.dtype() == mx::int16) {
+    return ctc_loss_vjp_impl<T, mx::uint16_t>(log_probs, targets, input_lengths, target_lengths, log_alpha, nll, ctg, blank, grad, log_beta);
   }
-  if (targets.dtype() == uint8 || targets.dtype() == int8) {
-    return ctc_loss_vjp_impl<T, uint8_t>(log_probs, targets, input_lengths, target_lengths, log_alpha, nll, ctg, blank, grad, log_beta);
+  if (targets.dtype() == mx::uint8 || targets.dtype() == mx::int8) {
+    return ctc_loss_vjp_impl<T, mx::uint8_t>(log_probs, targets, input_lengths, target_lengths, log_alpha, nll, ctg, blank, grad, log_beta);
   }
   throw std::runtime_error("CTCLossVJP is only supported for integral targets.");
 }
 
-void CTCLoss::eval_cpu(const std::vector<array>& inputs, std::vector<array>& outarr) {
+void CTCLoss::eval_cpu(const std::vector<mx::array>& inputs, std::vector<mx::array>& outarr) {
   auto& log_probs      = inputs[0];
   auto& targets        = inputs[1];
   auto& input_lengths  = inputs[2];
@@ -234,19 +234,19 @@ void CTCLoss::eval_cpu(const std::vector<array>& inputs, std::vector<array>& out
   auto& loss           = outarr[0];
   auto& log_alpha      = outarr[1];
 
-  if (loss.dtype() == float32) {
-    return ctc_loss_impl_i<float>(log_probs, targets, input_lengths, target_lengths, blank_, loss, log_alpha);
+  if (loss.dtype() == mx::float32) {
+    return ctc_loss_impl_i<mx::float>(log_probs, targets, input_lengths, target_lengths, blank_, loss, log_alpha);
   }
-  if (loss.dtype() == float16) {
-    return ctc_loss_impl_i<float16_t>(log_probs, targets, input_lengths, target_lengths, blank_, loss, log_alpha);
+  if (loss.dtype() == mx::float16) {
+    return ctc_loss_impl_i<mx::float16_t>(log_probs, targets, input_lengths, target_lengths, blank_, loss, log_alpha);
   }
-  if (loss.dtype() == bfloat16) {
-    return ctc_loss_impl_i<bfloat16_t>(log_probs, targets, input_lengths, target_lengths, blank_, loss, log_alpha);
+  if (loss.dtype() == mx::bfloat16) {
+    return ctc_loss_impl_i<mx::bfloat16_t>(log_probs, targets, input_lengths, target_lengths, blank_, loss, log_alpha);
   }
   throw std::runtime_error("CTCLoss is only supported for floating point types.");
 }
 
-void CTCLossVJP::eval_cpu(const std::vector<array>& inputs, std::vector<array>& outarr) {
+void CTCLossVJP::eval_cpu(const std::vector<mx::array>& inputs, std::vector<mx::array>& outarr) {
   auto& log_probs      = inputs[0];
   auto& targets        = inputs[1];
   auto& input_lengths  = inputs[2];
@@ -258,14 +258,14 @@ void CTCLossVJP::eval_cpu(const std::vector<array>& inputs, std::vector<array>& 
 
   array log_beta (log_alpha.shape(), log_alpha.dtype(), nullptr, {});
 
-  if (grad.dtype() == float32) {
-    return ctc_loss_vjp_impl_i<float>(log_probs, targets, input_lengths, target_lengths, log_alpha, nll, ctg, blank_, grad, log_beta);
+  if (grad.dtype() == mx::float32) {
+    return ctc_loss_vjp_impl_i<mx::float>(log_probs, targets, input_lengths, target_lengths, log_alpha, nll, ctg, blank_, grad, log_beta);
   }
-  if (grad.dtype() == float16) {
-    return ctc_loss_vjp_impl_i<float16_t>(log_probs, targets, input_lengths, target_lengths, log_alpha, nll, ctg, blank_, grad, log_beta);
+  if (grad.dtype() == mx::float16) {
+    return ctc_loss_vjp_impl_i<mx::float16_t>(log_probs, targets, input_lengths, target_lengths, log_alpha, nll, ctg, blank_, grad, log_beta);
   }
   if (grad.dtype() == bfloat16) {
-    return ctc_loss_vjp_impl_i<bfloat16_t>(log_probs, targets, input_lengths, target_lengths, log_alpha, nll, ctg, blank_, grad, log_beta);
+    return ctc_loss_vjp_impl_i<mx::bfloat16_t>(log_probs, targets, input_lengths, target_lengths, log_alpha, nll, ctg, blank_, grad, log_beta);
   }
   throw std::runtime_error("CTCLossVJP is only supported for floating point types.");
 }
