@@ -7,7 +7,7 @@
 #include "mlx/backend/metal/utils.h"
 #endif
 
-namespace mlx::core {
+namespace ctc_ext {
 
 #define assert_contiguous(a) \
   if (a.strides()[a.ndim()-1] != 1) throw std::runtime_error(#a " should be contiguous on last dimension")
@@ -18,14 +18,14 @@ static const std::string lib_name = "mlx_ctc";
 
 template<typename ...As>
 static inline void dispatch_kernel(
-  const Stream &s,
+  const mx::Stream &s,
   const std::string &kname,
   MTL::Size grid_size,
-  std::initializer_list<const array> inputs,
-  std::initializer_list<array> outputs,
+  std::initializer_list<const mx::array> inputs,
+  std::initializer_list<mx::array> outputs,
   As ...args
 ) {
-  auto& d = metal::device(s.device);
+  auto& d = mx::metal::device(s.device);
   auto lib = d.get_library(lib_name);
 
   auto& compute_encoder = d.get_command_encoder(s.index);
@@ -48,7 +48,7 @@ static inline void dispatch_kernel(
   compute_encoder.dispatch_threads(grid_size, group_size);
 }
 
-static inline void dispatch_fill_z(const Stream &s, array &a) {
+static inline void dispatch_fill_z(const mx::Stream &s, mx::array &a) {
   dispatch_kernel(
     s, "ctc_loss_fill_z_" + type_to_name(a),
     MTL::Size(a.data_size(), 1, 1),
@@ -56,7 +56,7 @@ static inline void dispatch_fill_z(const Stream &s, array &a) {
   );
 }
 
-void CTCLoss::eval_gpu(const std::vector<array>& inputs, std::vector<array>& outarr) {
+void CTCLoss::eval_gpu(const std::vector<mx::array>& inputs, std::vector<mx::array>& outarr) {
   auto& log_probs      = inputs[0];
   auto& targets        = inputs[1];
   auto& input_lengths  = inputs[2];
@@ -67,8 +67,8 @@ void CTCLoss::eval_gpu(const std::vector<array>& inputs, std::vector<array>& out
   size_t batch_size     = log_probs.shape()[1];
   size_t max_target_len = targets.shape()[1];
 
-  log_alpha.set_data(allocator::malloc(log_alpha.nbytes()));
-  loss.set_data(allocator::malloc(loss.nbytes()));
+  log_alpha.set_data(mx::allocator::malloc(log_alpha.nbytes()));
+  loss.set_data(mx::allocator::malloc(loss.nbytes()));
 
   assert_contiguous(log_probs);
   assert_contiguous(targets);
@@ -117,9 +117,9 @@ void CTCLoss::eval_gpu(const std::vector<array>& inputs, std::vector<array>& out
   );
 }
 
-void CTCLossVJP::eval_gpu(const std::vector<array>& inputs, std::vector<array>& outarr) {
+void CTCLossVJP::eval_gpu(const std::vector<mx::array>& inputs, std::vector<mx::array>& outarr) {
   auto& s = stream();
-  auto& d = metal::device(s.device);
+  auto& d = mx::metal::device(s.device);
   d.get_library(lib_name);
 
   auto& log_probs      = inputs[0];
@@ -138,8 +138,8 @@ void CTCLossVJP::eval_gpu(const std::vector<array>& inputs, std::vector<array>& 
   size_t max_target_len   = targets  .shape()[1];
   size_t num_channels     = log_probs.shape()[2];
 
-  grad.set_data(allocator::malloc(grad.nbytes()));
-  log_beta.set_data(allocator::malloc(log_beta.nbytes()));
+  grad.set_data(mx::allocator::malloc(grad.nbytes()));
+  log_beta.set_data(mx::allocator::malloc(log_beta.nbytes()));
 
   assert_contiguous(log_probs);
   assert_contiguous(targets);
@@ -217,11 +217,11 @@ void CTCLossVJP::eval_gpu(const std::vector<array>& inputs, std::vector<array>& 
 
 #else // Metal is not available
 
-void CTCLoss::eval_gpu(const std::vector<array>& inputs, std::vector<array>& out) {
+void CTCLoss::eval_gpu(const std::vector<mx::array>& inputs, std::vector<mx::array>& out) {
   throw std::runtime_error("CTCLoss has no GPU implementation.");
 }
 
-void CTCLossVJP::eval_gpu(const std::vector<array>& inputs, std::vector<array>& out) {
+void CTCLossVJP::eval_gpu(const std::vector<mx::array>& inputs, std::vector<mx::array>& out) {
   throw std::runtime_error("CTCLossVJP has no GPU implementation.");
 }
 
